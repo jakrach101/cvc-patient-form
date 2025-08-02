@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แบบฟอร์มบันทึกข้อมูลผู้ป่วย CVC</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom font for better Thai readability */
@@ -49,7 +48,6 @@
         </h2>
 
         <form id="patientForm">
-            <!-- Part 1: Patient General Information -->
             <section class="mb-8 p-4 bg-blue-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-blue-800">ส่วนที่ 1: ข้อมูลทั่วไปผู้ป่วย</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -78,11 +76,15 @@
                         <label for="diagnosis" class="block text-gray-700 text-sm font-medium mb-1">การวินิจฉัยหลัก</label>
                         <input type="text" id="diagnosis" name="diagnosis" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น Sepsis">
                     </div>
-                    <!-- Underlying Disease section with dynamic add functionality -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="onEtt" value="Yes" class="form-checkbox text-blue-600 h-5 w-5 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-gray-800 font-medium">On ETT</span>
+                        </label>
+                    </div>
                     <div class="col-span-1 md:col-span-2">
                         <label class="block text-gray-700 text-sm font-medium mb-1">โรคประจำตัว</label>
                         <div id="underlying-diseases-container">
-                            <!-- Initial input field for underlying disease -->
                             <div class="flex items-center mb-2">
                                 <input type="text" name="underlyingDisease[]" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น Diabetes Mellitus">
                             </div>
@@ -94,7 +96,6 @@
                 </div>
             </section>
 
-            <!-- Part 2: Vital Signs Before Procedure -->
             <section class="mb-8 p-4 bg-green-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-green-800">ส่วนที่ 2: สัญญาณชีพก่อนหัตถการ</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -125,7 +126,6 @@
                 </div>
             </section>
 
-            <!-- Part 3: Vital Signs After Procedure (1 hr) -->
             <section class="mb-8 p-4 bg-yellow-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-yellow-800">ส่วนที่ 3: สัญญาณชีพหลังหัตถการ (1 ชม.)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -156,7 +156,6 @@
                 </div>
             </section>
 
-            <!-- Part 4: Indications for CVC Insertion -->
             <section class="mb-8 p-4 bg-purple-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-purple-800">ส่วนที่ 4: ข้อบ่งชี้ในการใส่สาย (เลือกตอบได้หลายข้อ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -179,7 +178,6 @@
                 </div>
             </section>
 
-            <!-- Part 5: CVC Insertion Site -->
             <section class="mb-8 p-4 bg-pink-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-pink-800">ส่วนที่ 5: ตำแหน่งที่ใส่สาย (เลือกตอบได้หลายข้อ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -198,7 +196,6 @@
                 </div>
             </section>
 
-            <!-- Part 6: Outcomes -->
             <section class="mb-8 p-4 bg-teal-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-teal-800">ส่วนที่ 6: ผลลัพธ์ (เลือกตอบได้หลายข้อ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -213,7 +210,6 @@
                 </div>
             </section>
 
-            <!-- Part 7: Acute Complications -->
             <section class="mb-8 p-4 bg-red-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-red-800">ส่วนที่ 7: ภาวะแทรกซ้อนเฉียบพลัน (เลือกตอบได้หลายข้อ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -236,7 +232,6 @@
                 </div>
             </section>
 
-            <!-- Part 8: Delayed Complications -->
             <section class="mb-8 p-4 bg-indigo-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-indigo-800">ส่วนที่ 8: ภาวะแทรกซ้อนล่าช้า (เลือกตอบได้หลายข้อ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -256,7 +251,6 @@
                     บันทึกข้อมูล
                 </button>
             </div>
-            <!-- Message box for feedback -->
             <div id="message-box" class="message-box hidden"></div>
         </form>
     </div>
@@ -341,17 +335,25 @@
                     data[key] = value;
                 }
             }
-
-            // Special handling for checkboxes that allow multiple selections
-            // formData.entries() might only give the first checked value if multiple checkboxes have the same 'name'
-            // So, we iterate through all checkboxes to ensure all checked values are captured.
+            
+            // Special handling for checkboxes that allow multiple selections OR single checkboxes
+            // This ensures all checked values are captured, even single ones like 'onEtt'
             patientForm.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 const name = checkbox.name;
-                if (!data[name]) {
-                    data[name] = []; // Initialize as array if not already done
-                }
-                if (checkbox.checked && !data[name].includes(checkbox.value)) {
-                    data[name].push(checkbox.value);
+                 // If the checkbox is checked, we process it
+                if (checkbox.checked) {
+                    if (!data[name]) {
+                        data[name] = []; // Initialize as an array if not present
+                    }
+                    if (!data[name].includes(checkbox.value)) {
+                        data[name].push(checkbox.value);
+                    }
+                } else {
+                    // For single checkboxes like 'onEtt', if they are unchecked, ensure they are not in the data
+                    // or are represented as an empty array to be later joined as an empty string.
+                    if(!Array.isArray(data[name])) {
+                        // This handles cases where a single checkbox is the only one with its name
+                    }
                 }
             });
 
@@ -360,6 +362,12 @@
                 if (Array.isArray(data[key])) {
                     data[key] = data[key].join(', ');
                 }
+            }
+
+            // If an onEtt checkbox was unchecked, it might not be in 'data' at all.
+            // We should ensure it has a key in the final object so the column order in Google Sheets is maintained.
+            if (!data.hasOwnProperty('onEtt')) {
+                data.onEtt = ''; // Add it with an empty value
             }
 
             try {
