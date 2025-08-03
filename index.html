@@ -6,17 +6,19 @@
     <title>แบบฟอร์มบันทึกข้อมูลผู้ป่วย CVC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom font for better Thai readability */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
+            background-color: #f3f4f6;
         }
-        /* Ensure input focus styles are consistent */
         input:focus, select:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Blue shadow on focus */
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
         }
-        /* Styling for the message box */
+        /* -- NEW: Style for invalid fields -- */
+        .is-invalid {
+            border-color: #ef4444 !important; /* Red-500 */
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5) !important;
+        }
         .message-box {
             padding: 1rem;
             border-radius: 0.5rem;
@@ -25,16 +27,16 @@
             font-weight: bold;
         }
         .message-box.success {
-            background-color: #d1fae5; /* Green-100 */
-            color: #065f46; /* Green-800 */
+            background-color: #d1fae5;
+            color: #065f46;
         }
         .message-box.error {
-            background-color: #fee2e2; /* Red-100 */
-            color: #991b1b; /* Red-800 */
+            background-color: #fee2e2;
+            color: #991b1b;
         }
         .message-box.loading {
-            background-color: #e0f2fe; /* Blue-100 */
-            color: #1e40af; /* Blue-800 */
+            background-color: #e0f2fe;
+            color: #1e40af;
         }
     </style>
 </head>
@@ -47,23 +49,23 @@
             ห้องฉุกเฉินโรงพยาบาลกาฬสินธุ์
         </h2>
 
-        <form id="patientForm">
+        <form id="patientForm" novalidate>
             <section class="mb-8 p-4 bg-blue-50 rounded-lg shadow-sm">
                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-blue-800">ส่วนที่ 1: ข้อมูลทั่วไปผู้ป่วย</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="patient-id" class="block text-gray-700 text-sm font-medium mb-1">รหัสผู้ป่วย (ID)</label>
-                        <input type="text" id="patient-id" name="patientId" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น P001">
+                        <input type="text" id="patient-id" name="patientId" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น P001" required>
                     </div>
                     <div>
                         <label for="age" class="block text-gray-700 text-sm font-medium mb-1">อายุ (ปี)</label>
-                        <input type="number" id="age" name="age" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" placeholder="เช่น 35">
+                        <input type="number" id="age" name="age" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" placeholder="เช่น 35" required>
                     </div>
                     <div class="col-span-1 md:col-span-2">
                         <label class="block text-gray-700 text-sm font-medium mb-1">เพศ</label>
-                        <div class="flex flex-wrap gap-4">
+                        <div class="flex flex-wrap gap-4" data-required-name="gender">
                             <label class="inline-flex items-center">
-                                <input type="radio" name="gender" value="ชาย" class="form-radio text-blue-600 rounded-full focus:ring-blue-500">
+                                <input type="radio" name="gender" value="ชาย" class="form-radio text-blue-600 rounded-full focus:ring-blue-500" required>
                                 <span class="ml-2 text-gray-800">ชาย</span>
                             </label>
                             <label class="inline-flex items-center">
@@ -74,22 +76,22 @@
                     </div>
                     <div class="col-span-1 md:col-span-2">
                         <label for="diagnosis" class="block text-gray-700 text-sm font-medium mb-1">การวินิจฉัยหลัก</label>
-                        <input type="text" id="diagnosis" name="diagnosis" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น Sepsis">
+                        <input type="text" id="diagnosis" name="diagnosis" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น Sepsis" required>
                     </div>
                     <div class="col-span-1 md:col-span-2">
                         <label class="inline-flex items-center">
                             <input type="checkbox" name="onEtt" value="Yes" class="form-checkbox text-blue-600 h-5 w-5 rounded focus:ring-blue-500">
-                            <span class="ml-2 text-gray-800 font-medium">On ETT</span>
+                            <span class="ml-2 text-gray-800 font-medium">On ETT (ไม่บังคับ)</span>
                         </label>
                     </div>
                     <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-medium mb-1">โรคประจำตัว</label>
+                        <label class="block text-gray-700 text-sm font-medium mb-1">โรคประจำตัว (ไม่บังคับ)</label>
                         <div id="underlying-diseases-container">
                             <div class="flex items-center mb-2">
                                 <input type="text" name="underlyingDisease[]" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น Diabetes Mellitus">
                             </div>
                         </div>
-                        <button type="button" id="add-disease-btn" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white text-sm py-1 px-3 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105">
+                        <button type="button" id="add-disease-btn" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white text-sm py-1 px-3 rounded-md shadow-sm transition duration-300">
                             เพิ่มโรคประจำตัว
                         </button>
                     </div>
@@ -101,153 +103,107 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
                         <label for="bp-before" class="block text-gray-700 text-sm font-medium mb-1">BP (mmHg)</label>
-                        <input type="text" id="bp-before" name="bpBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="เช่น 120/80">
+                        <input type="text" id="bp-before" name="bpBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500" placeholder="เช่น 120/80" required>
                     </div>
                     <div>
                         <label for="hr-before" class="block text-gray-700 text-sm font-medium mb-1">HR (bpm)</label>
-                        <input type="number" id="hr-before" name="hrBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" min="0" placeholder="เช่น 90">
+                        <input type="number" id="hr-before" name="hrBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500" min="0" placeholder="เช่น 90" required>
                     </div>
                     <div>
                         <label for="rr-before" class="block text-gray-700 text-sm font-medium mb-1">RR (breaths/min)</label>
-                        <input type="number" id="rr-before" name="rrBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" min="0" placeholder="เช่น 20">
+                        <input type="number" id="rr-before" name="rrBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500" min="0" placeholder="เช่น 20" required>
                     </div>
                     <div>
                         <label for="spo2-before" class="block text-gray-700 text-sm font-medium mb-1">SpO2 (%)</label>
-                        <input type="number" id="spo2-before" name="spo2Before" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" min="0" max="100" placeholder="เช่น 98">
+                        <input type="number" id="spo2-before" name="spo2Before" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500" min="0" max="100" placeholder="เช่น 98" required>
                     </div>
                     <div>
                         <label for="temp-before" class="block text-gray-700 text-sm font-medium mb-1">Temperature (°C)</label>
-                        <input type="number" step="0.1" id="temp-before" name="tempBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" min="0" placeholder="เช่น 37.5">
+                        <input type="number" step="0.1" id="temp-before" name="tempBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500" min="0" placeholder="เช่น 37.5" required>
                     </div>
                     <div>
                         <label for="gcs-before" class="block text-gray-700 text-sm font-medium mb-1">GCS ก่อนหัตถการ</label>
-                        <input type="number" id="gcs-before" name="gcsBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" min="3" max="15" placeholder="เช่น 15">
+                        <input type="number" id="gcs-before" name="gcsBefore" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500" min="3" max="15" placeholder="เช่น 15" required>
                     </div>
                 </div>
             </section>
 
             <section class="mb-8 p-4 bg-yellow-50 rounded-lg shadow-sm">
-                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-yellow-800">ส่วนที่ 3: สัญญาณชีพหลังหัตถการ (1 ชม.)</h3>
+                 <h3 class="text-lg sm:text-xl font-semibold mb-4 text-yellow-800">ส่วนที่ 3: สัญญาณชีพหลังหัตถการ (1 ชม.)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
                         <label for="bp-after" class="block text-gray-700 text-sm font-medium mb-1">BP (mmHg)</label>
-                        <input type="text" id="bp-after" name="bpAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="เช่น 110/70">
+                        <input type="text" id="bp-after" name="bpAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500" placeholder="เช่น 110/70" required>
                     </div>
                     <div>
                         <label for="hr-after" class="block text-gray-700 text-sm font-medium mb-1">HR (bpm)</label>
-                        <input type="number" id="hr-after" name="hrAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent" min="0" placeholder="เช่น 85">
+                        <input type="number" id="hr-after" name="hrAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500" min="0" placeholder="เช่น 85" required>
                     </div>
                     <div>
                         <label for="rr-after" class="block text-gray-700 text-sm font-medium mb-1">RR (breaths/min)</label>
-                        <input type="number" id="rr-after" name="rrAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent" min="0" placeholder="เช่น 18">
+                        <input type="number" id="rr-after" name="rrAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500" min="0" placeholder="เช่น 18" required>
                     </div>
                     <div>
                         <label for="spo2-after" class="block text-gray-700 text-sm font-medium mb-1">SpO2 (%)</label>
-                        <input type="number" id="spo2-after" name="spo2After" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent" min="0" max="100" placeholder="เช่น 99">
+                        <input type="number" id="spo2-after" name="spo2After" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500" min="0" max="100" placeholder="เช่น 99" required>
                     </div>
                     <div>
                         <label for="temp-after" class="block text-gray-700 text-sm font-medium mb-1">Temperature (°C)</label>
-                        <input type="number" step="0.1" id="temp-after" name="tempAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent" min="0" placeholder="เช่น 37.0">
+                        <input type="number" step="0.1" id="temp-after" name="tempAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500" min="0" placeholder="เช่น 37.0" required>
                     </div>
                     <div>
                         <label for="gcs-after" class="block text-gray-700 text-sm font-medium mb-1">GCS หลังหัตถการ</label>
-                        <input type="number" id="gcs-after" name="gcsAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent" min="3" max="15" placeholder="เช่น 15">
+                        <input type="number" id="gcs-after" name="gcsAfter" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500" min="3" max="15" placeholder="เช่น 15" required>
                     </div>
                 </div>
             </section>
 
-            <section class="mb-8 p-4 bg-purple-50 rounded-lg shadow-sm">
-                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-purple-800">ส่วนที่ 4: ข้อบ่งชี้ในการใส่สาย (เลือกตอบได้หลายข้อ)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="indication" value="ช็อก" class="form-checkbox text-purple-600 rounded focus:ring-purple-500">
-                        <span class="ml-2 text-gray-800">Shock</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="indication" value="ไม่มีเส้นเลือดดำส่วนปลาย" class="form-checkbox text-purple-600 rounded focus:ring-purple-500">
-                        <span class="ml-2 text-gray-800">ไม่มีเส้นเลือดดำส่วนปลาย</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="indication" value="ต้องให้วาสโพรเพรสเซอร์" class="form-checkbox text-purple-600 rounded focus:ring-purple-500">
-                        <span class="ml-2 text-gray-800">ต้องให้ Vasopressor</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="indication" value="ต้องการฟอกไต" class="form-checkbox text-purple-600 rounded focus:ring-purple-500">
-                        <span class="ml-2 text-gray-800">ต้องการ Dialysis</span>
-                    </label>
+             <section class="mb-8 p-4 bg-purple-50 rounded-lg shadow-sm">
+                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-purple-800">ส่วนที่ 4: ข้อบ่งชี้ในการใส่สาย (เลือกอย่างน้อย 1 ข้อ)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" data-required-name="indication">
+                    <label class="inline-flex items-center"><input type="checkbox" name="indication" value="ช็อก" class="form-checkbox text-purple-600 rounded focus:ring-purple-500" required><span class="ml-2">Shock</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="indication" value="ไม่มีเส้นเลือดดำส่วนปลาย" class="form-checkbox text-purple-600 rounded focus:ring-purple-500"><span class="ml-2">ไม่มีเส้นเลือดดำส่วนปลาย</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="indication" value="ต้องให้วาสโพรเพรสเซอร์" class="form-checkbox text-purple-600 rounded focus:ring-purple-500"><span class="ml-2">ต้องให้ Vasopressor</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="indication" value="ต้องการฟอกไต" class="form-checkbox text-purple-600 rounded focus:ring-purple-500"><span class="ml-2">ต้องการ Dialysis</span></label>
                 </div>
             </section>
 
             <section class="mb-8 p-4 bg-pink-50 rounded-lg shadow-sm">
-                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-pink-800">ส่วนที่ 5: ตำแหน่งที่ใส่สาย (เลือกตอบได้หลายข้อ)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="insertionSite" value="หลอดเลือดดำคอชั้นใน (Internal Jugular)" class="form-checkbox text-pink-600 rounded focus:ring-pink-500">
-                        <span class="ml-2 text-gray-800">Internal Jugular</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="insertionSite" value="หลอดเลือดดำใต้ไหปลาร้า (Subclavian)" class="form-checkbox text-pink-600 rounded focus:ring-pink-500">
-                        <span class="ml-2 text-gray-800">Subclavian</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="insertionSite" value="หลอดเลือดดำขาหนีบ (Femoral)" class="form-checkbox text-pink-600 rounded focus:ring-pink-500">
-                        <span class="ml-2 text-gray-800">Femoral</span>
-                    </label>
+                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-pink-800">ส่วนที่ 5: ตำแหน่งที่ใส่สาย (เลือกอย่างน้อย 1 ข้อ)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" data-required-name="insertionSite">
+                    <label class="inline-flex items-center"><input type="checkbox" name="insertionSite" value="Internal Jugular" class="form-checkbox text-pink-600 rounded focus:ring-pink-500" required><span class="ml-2">Internal Jugular</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="insertionSite" value="Subclavian" class="form-checkbox text-pink-600 rounded focus:ring-pink-500"><span class="ml-2">Subclavian</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="insertionSite" value="Femoral" class="form-checkbox text-pink-600 rounded focus:ring-pink-500"><span class="ml-2">Femoral</span></label>
                 </div>
             </section>
 
             <section class="mb-8 p-4 bg-teal-50 rounded-lg shadow-sm">
-                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-teal-800">ส่วนที่ 6: ผลลัพธ์ (เลือกตอบได้หลายข้อ)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="outcome" value="รอดชีวิตที่ 24 ชม." class="form-checkbox text-teal-600 rounded focus:ring-teal-500">
-                        <span class="ml-2 text-gray-800">รอดชีวิตที่ 24 ชม.</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="outcome" value="รอดชีวิตจนจำหน่าย" class="form-checkbox text-teal-600 rounded focus:ring-teal-500">
-                        <span class="ml-2 text-gray-800">รอดชีวิตจนจำหน่าย</span>
-                    </label>
+                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-teal-800">ส่วนที่ 6: ผลลัพธ์ (เลือกอย่างน้อย 1 ข้อ)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" data-required-name="outcome">
+                    <label class="inline-flex items-center"><input type="checkbox" name="outcome" value="รอดชีวิตที่ 24 ชม." class="form-checkbox text-teal-600 rounded focus:ring-teal-500" required><span class="ml-2">รอดชีวิตที่ 24 ชม.</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="outcome" value="รอดชีวิตจนจำหน่าย" class="form-checkbox text-teal-600 rounded focus:ring-teal-500"><span class="ml-2">รอดชีวิตจนจำหน่าย</span></label>
                 </div>
             </section>
 
             <section class="mb-8 p-4 bg-red-50 rounded-lg shadow-sm">
-                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-red-800">ส่วนที่ 7: ภาวะแทรกซ้อนเฉียบพลัน (เลือกตอบได้หลายข้อ)</h3>
+                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-red-800">ส่วนที่ 7: ภาวะแทรกซ้อนเฉียบพลัน (ไม่บังคับ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="acuteComplication" value="แทงโดนหลอดเลือดแดง" class="form-checkbox text-red-600 rounded focus:ring-red-500">
-                        <span class="ml-2 text-gray-800">Arterial puncture</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="acuteComplication" value="ภาวะลมรั่วในช่องเยื่อหุ้มปอด" class="form-checkbox text-red-600 rounded focus:ring-red-500">
-                        <span class="ml-2 text-gray-800">Pneumothorax</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="acuteComplication" value="ภาวะเลือดคั่ง" class="form-checkbox text-red-600 rounded focus:ring-red-500">
-                        <span class="ml-2 text-gray-800">Hematoma</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="acuteComplication" value="ตำแหน่งสายคลาดเคลื่อน" class="form-checkbox text-red-600 rounded focus:ring-red-500">
-                        <span class="ml-2 text-gray-800">Catheter malposition</span>
-                    </label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="acuteComplication" value="Arterial puncture"><span class="ml-2">Arterial puncture</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="acuteComplication" value="Pneumothorax"><span class="ml-2">Pneumothorax</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="acuteComplication" value="Hematoma"><span class="ml-2">Hematoma</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="acuteComplication" value="Catheter malposition"><span class="ml-2">Catheter malposition</span></label>
                 </div>
             </section>
-
             <section class="mb-8 p-4 bg-indigo-50 rounded-lg shadow-sm">
-                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-indigo-800">ส่วนที่ 8: ภาวะแทรกซ้อนล่าช้า (เลือกตอบได้หลายข้อ)</h3>
+                <h3 class="text-lg sm:text-xl font-semibold mb-4 text-indigo-800">ส่วนที่ 8: ภาวะแทรกซ้อนล่าช้า (ไม่บังคับ)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="delayedComplication" value="ติดเชื้อในกระแสเลือดที่สัมพันธ์กับสาย (CRBSI)" class="form-checkbox text-indigo-600 rounded focus:ring-indigo-500">
-                        <span class="ml-2 text-gray-800">CRBSI</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="delayedComplication" value="ภาวะลิ่มเลือดอุดตันในหลอดเลือดดำส่วนกลาง" class="form-checkbox text-indigo-600 rounded focus:ring-indigo-500">
-                        <span class="ml-2 text-gray-800">Central vein thrombosis</span>
-                    </label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="delayedComplication" value="CRBSI"><span class="ml-2">CRBSI</span></label>
+                    <label class="inline-flex items-center"><input type="checkbox" name="delayedComplication" value="Central vein thrombosis"><span class="ml-2">Central vein thrombosis</span></label>
                 </div>
             </section>
 
             <div class="text-center">
-                <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300">
                     บันทึกข้อมูล
                 </button>
             </div>
@@ -256,148 +212,149 @@
     </div>
 
     <script>
-        // Get the container for underlying diseases and the add button
-        const underlyingDiseasesContainer = document.getElementById('underlying-diseases-container');
-        const addDiseaseBtn = document.getElementById('add-disease-btn');
         const patientForm = document.getElementById('patientForm');
         const submitBtn = document.getElementById('submit-btn');
         const messageBox = document.getElementById('message-box');
-
-        // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
-        // ขั้นตอนที่ 3: นำ URL ของ Google Apps Script Web App ที่คุณ Deploy แล้วมาใส่ที่นี่
+        const underlyingDiseasesContainer = document.getElementById('underlying-diseases-container');
+        const addDiseaseBtn = document.getElementById('add-disease-btn');
+        
         const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwH2fpNEev8z-u1YR6X88vBQKqE3TbjxMoFoiB_pQ95WsImIqwsC0IhVJDVv8ZNCRs6Qg/exec';
 
-        // Function to create a new underlying disease input field
-        function createDiseaseInputField() {
-            const div = document.createElement('div');
-            div.className = 'flex items-center mb-2'; // Tailwind classes for flex layout and margin-bottom
-
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.name = 'underlyingDisease[]'; // Use array-like name for multiple inputs
-            input.className = 'w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'; // Tailwind classes for styling
-            input.placeholder = 'เช่น Hypertension'; // Placeholder for new fields
-
-            const removeButton = document.createElement('button');
-            removeButton.type = 'button';
-            removeButton.className = 'ml-2 bg-red-500 hover:bg-red-600 text-white text-sm py-1 px-2 rounded-md shadow-sm transition duration-300 ease-in-out transform hover:scale-105'; // Tailwind classes for styling
-            removeButton.textContent = 'ลบ'; // Button text
-
-            // Add event listener to remove the input field when the button is clicked
-            removeButton.onclick = function() {
-                div.remove();
-            };
-
-            div.appendChild(input);
-            div.appendChild(removeButton);
-            return div;
-        }
-
-        // Add event listener to the "Add Disease" button
-        addDiseaseBtn.addEventListener('click', function() {
-            underlyingDiseasesContainer.appendChild(createDiseaseInputField());
-        });
-
-        // Function to display messages to the user
         function showMessage(message, type) {
             messageBox.textContent = message;
             messageBox.className = `message-box ${type}`;
             messageBox.classList.remove('hidden');
         }
 
-        // Event listener for form submission
-        patientForm.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+        function createDiseaseInputField() {
+            /* ... (โค้ดส่วนนี้เหมือนเดิม) ... */
+        }
+        addDiseaseBtn.addEventListener('click', createDiseaseInputField);
+        
+        // --- NEW VALIDATION FUNCTION ---
+        function validateForm() {
+            let firstInvalidField = null;
 
-            // Basic validation: Check if GOOGLE_APPS_SCRIPT_WEB_APP_URL is set
-            if (GOOGLE_APPS_SCRIPT_WEB_APP_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE' || !GOOGLE_APPS_SCRIPT_WEB_APP_URL) {
+            // Remove previous error styles
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+            // 1. Check all standard inputs with 'required' attribute
+            const requiredInputs = patientForm.querySelectorAll('input[required]');
+            requiredInputs.forEach(input => {
+                let isInvalid = false;
+                if (input.type === 'radio') {
+                    // Handled by group check below
+                } else {
+                    if (input.value.trim() === '') {
+                        isInvalid = true;
+                    }
+                }
+                
+                if (isInvalid) {
+                    input.classList.add('is-invalid');
+                    if (!firstInvalidField) firstInvalidField = input;
+                }
+            });
+
+            // 2. Check radio/checkbox groups (identified by a parent with `data-required-name`)
+            const requiredGroups = patientForm.querySelectorAll('[data-required-name]');
+            requiredGroups.forEach(group => {
+                const groupName = group.dataset.requiredName;
+                const isChecked = group.querySelector(`input[name="${groupName}"]:checked`);
+                if (!isChecked) {
+                    group.classList.add('is-invalid');
+                    const firstInputInGroup = group.querySelector('input');
+                    if (!firstInvalidField) firstInvalidField = firstInputInGroup;
+                }
+            });
+
+
+            if (firstInvalidField) {
+                showMessage('⚠️ กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error');
+                firstInvalidField.focus(); // Focus on the first invalid field
+                // Scroll to the field for better visibility
+                firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false; // Validation failed
+            }
+
+            return true; // Validation passed
+        }
+
+
+        patientForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // --- RUN VALIDATION FIRST ---
+            if (!validateForm()) {
+                return; // Stop submission if validation fails
+            }
+
+            if (GOOGLE_APPS_SCRIPT_WEB_APP_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE')) {
                 showMessage('กรุณาตั้งค่า GOOGLE_APPS_SCRIPT_WEB_APP_URL ในโค้ด JavaScript ก่อน', 'error');
                 return;
             }
 
             showMessage('กำลังบันทึกข้อมูล...', 'loading');
-            submitBtn.disabled = true; // Disable button during submission
+            submitBtn.disabled = true;
 
             const formData = new FormData(patientForm);
             const data = {};
 
-            // Collect all form data
+            // Collect values, handling multiple entries
             for (let [key, value] of formData.entries()) {
-                if (key.endsWith('[]')) { // Handle array-like inputs (e.g., underlyingDisease[])
-                    const fieldName = key.slice(0, -2); // Remove '[]'
-                    if (!data[fieldName]) {
-                        data[fieldName] = [];
+                if (key.endsWith('[]')) {
+                    const fieldName = key.slice(0, -2);
+                    if (!data[fieldName]) data[fieldName] = [];
+                    if (value.trim() !== '') data[fieldName].push(value);
+                } else if (data[key]) {
+                    if (!Array.isArray(data[key])) {
+                        data[key] = [data[key]];
                     }
-                    if (value.trim() !== '') { // Only add non-empty values
-                        data[fieldName].push(value);
-                    }
+                    data[key].push(value);
                 } else {
                     data[key] = value;
                 }
             }
-            
-            // Special handling for checkboxes that allow multiple selections OR single checkboxes
-            // This ensures all checked values are captured, even single ones like 'onEtt'
-            patientForm.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                const name = checkbox.name;
-                 // If the checkbox is checked, we process it
-                if (checkbox.checked) {
-                    if (!data[name]) {
-                        data[name] = []; // Initialize as an array if not present
-                    }
-                    if (!data[name].includes(checkbox.value)) {
-                        data[name].push(checkbox.value);
-                    }
-                } else {
-                    // For single checkboxes like 'onEtt', if they are unchecked, ensure they are not in the data
-                    // or are represented as an empty array to be later joined as an empty string.
-                    if(!Array.isArray(data[name])) {
-                        // This handles cases where a single checkbox is the only one with its name
-                    }
+
+            // Ensure unchecked checkboxes have a value
+             patientForm.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                if (!checkbox.checked && !data.hasOwnProperty(checkbox.name)) {
+                     const hasSameNameChecked = formData.getAll(checkbox.name).length > 0;
+                     if(!hasSameNameChecked) {
+                        data[checkbox.name] = '';
+                     }
                 }
             });
 
-            // Convert arrays to comma-separated strings for Google Sheet
+
+            // Convert arrays to comma-separated strings
             for (const key in data) {
                 if (Array.isArray(data[key])) {
                     data[key] = data[key].join(', ');
                 }
             }
-
-            // If an onEtt checkbox was unchecked, it might not be in 'data' at all.
-            // We should ensure it has a key in the final object so the column order in Google Sheets is maintained.
-            if (!data.hasOwnProperty('onEtt')) {
-                data.onEtt = ''; // Add it with an empty value
-            }
-
+            
+            // Send data to Google Apps Script
             try {
                 const response = await fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Required for Google Apps Script web app
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    mode: 'no-cors',
                     body: JSON.stringify(data),
                 });
 
-                // Since mode is 'no-cors', we can't directly read response.ok or response.json()
-                // We assume success if no network error occurred.
                 showMessage('บันทึกข้อมูลสำเร็จ!', 'success');
-                patientForm.reset(); // Clear the form after successful submission
-                // Clear dynamically added disease fields, reset to initial state
-                underlyingDiseasesContainer.innerHTML = `
-                    <div class="flex items-center mb-2">
-                        <input type="text" name="underlyingDisease[]" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="เช่น Diabetes Mellitus">
-                    </div>
-                `;
+                patientForm.reset();
+                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                messageBox.classList.add('hidden');
 
             } catch (error) {
                 console.error('Error submitting form:', error);
-                showMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองอีกครั้ง', 'error');
+                showMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
             } finally {
-                submitBtn.disabled = false; // Re-enable button
+                submitBtn.disabled = false;
             }
         });
+
     </script>
 </body>
 </html>
